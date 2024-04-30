@@ -2,7 +2,7 @@
 
 # yaml-language-server: $schema=../../schema.json
 users:
-  - name: tyzbit
+  - name: seisna
     shell: /bin/bash
     groups: [admin]
     ssh_authorized_keys: [github:Seisna]
