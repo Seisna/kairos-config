@@ -5,7 +5,7 @@ users:
   - name: tyzbit
     shell: /bin/bash
     groups: [admin]
-    ssh_authorized_keys: [github:tyzbit]
+    ssh_authorized_keys: [github:Seisna]
 
 install:
   auto: true
@@ -36,9 +36,9 @@ flux:
   # env:
   #   GITHUB_TOKEN: secretstuff
   github:
-    owner: tyzbit
-    repository: fleet-infra
-    path: clusters/corpus
+    owner: Seisna
+    repository: homeops
+    path: kubernetes
     components-extra: image-reflector-controller,image-automation-controller
     network-policy: "false"
 
@@ -85,14 +85,14 @@ stages:
           path: /dev/nvme0n1
 
   after-install-chroot:
-    - name: "Add sensitive config values"
-      downloads:
-        - url: http://nas.onair/sensitive_configs.yaml
-          path: /oem/50_sensitive_configs.yaml
-    - name: "Add SOPS secret"
-      downloads:
-        - url: http://nas.onair/sops_secret.yaml
-          path: /var/lib/rancher/k3s/server/manifests/sops-secret.yaml
+    #- name: "Add sensitive config values"
+    #  downloads:
+    #    - url: http://nas.onair/sensitive_configs.yaml
+    #      path: /oem/50_sensitive_configs.yaml
+    #- name: "Add SOPS secret"
+    #  downloads:
+    #    - url: http://nas.onair/sops_secret.yaml
+    #      path: /var/lib/rancher/k3s/server/manifests/sops-secret.yaml
 
     # -- These are in this repo
     - name: "Add cluster-specific manifests from GitHub"
