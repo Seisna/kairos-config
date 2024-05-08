@@ -45,14 +45,14 @@ flux:
 stages:
   # -- If a node has /dev/sda, use that. Otherwise use /dev/nvme0n1
   kairos-install.pre.before:
-    - if: "[ -e /dev/sda ]"
-      name: "Conditionally partition sda"
+    - if: "[ -e /dev/nvme0n1 ]"
+      name: "Conditionally partition nvme0n1"
       commands:
         - |
-          parted --script --machine -- /dev/sda mklabel gpt
+          parted --script --machine -- /dev/nvme0n1 mklabel gpt
       layout: &layout
         device:
-          path: /dev/sda
+          path: /dev/nvme0n1
         expand_partition:
           size: 0 # All available space
         add_partitions:
@@ -74,15 +74,15 @@ stages:
             pLabel: persistent
             size: 25000
             filesystem: "ext4"
-    - if: "[ ! -e /dev/sda ]"
-      name: "Conditionally partition nvme0n1"
+    - if: "[ ! -e /dev/nvme0n1 ]"
+      name: "Conditionally partition sda"
       commands:
         - |
-          parted --script --machine -- /dev/nvme0n1 mklabel gpt
+          parted --script --machine -- /dev/sda mklabel gpt
       layout:
         <<: *layout
         device:
-          path: /dev/nvme0n1
+          path: /dev/sda
 
   after-install-chroot:
     #- name: "Add sensitive config values"
@@ -97,13 +97,13 @@ stages:
     # -- These are in this repo
     - name: "Add cluster-specific manifests from GitHub"
       downloads:
-        - url: https://raw.githubusercontent.com/Seisna/kairos-config/main/clusters/corpus/manifests/tigera-operator.yaml
+        - url: https://raw.githubusercontent.com/tyzbit/kairos-config/main/clusters/corpus/manifests/tigera-operator.yaml
           path: /var/lib/rancher/k3s/server/manifests/tigera-operator.yaml
-        - url: https://raw.githubusercontent.com/Seisna/kairos-config/main/clusters/corpus/manifests/calico-crds.yaml
+        - url: https://raw.githubusercontent.com/tyzbit/kairos-config/main/clusters/corpus/manifests/calico-crds.yaml
           path: /var/lib/rancher/k3s/server/manifests/calico-crds.yaml
-        - url: https://raw.githubusercontent.com/Seisna/kairos-config/main/clusters/corpus/manifests/flux-system-namespace.yaml
+        - url: https://raw.githubusercontent.com/tyzbit/kairos-config/main/clusters/corpus/manifests/flux-system-namespace.yaml
           path: /var/lib/rancher/k3s/server/manifests/flux-system-namespace.yaml
-        - url: https://raw.githubusercontent.com/Seisna/kairos-config/main/clusters/corpus/manifests/kubelet-config.yaml
+        - url: https://raw.githubusercontent.com/tyzbit/kairos-config/main/clusters/corpus/manifests/kubelet-config.yaml
           path: /etc/rancher/k3s/kubelet-config.yaml
 
     # -- (only `commands`,`entities` and `files` may have templating)
